@@ -430,6 +430,10 @@ void ircd_parse(client_t * clients, int k, int num_clients, char *buf)
             char *dest = argv[1];
             reply(cl, dest, ":%s %s %s :%s", mask, cmd, argv[1], argv[2]);
         }
+        else if (!strcmp(cmd, "PING"))
+        {
+            reply(cl, 0, "PONG %s :%s", serv, cl->nickname);
+        }
     }
 }
 
