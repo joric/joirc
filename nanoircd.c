@@ -461,18 +461,18 @@ int main(int argc, char *argv[])
     timeout.tv_sec = 0;
     timeout.tv_usec = 0;
 
-    (listener = socket(AF_INET, SOCK_STREAM, 0)) > 0 || die(0);
+    (void) ((listener = socket(AF_INET, SOCK_STREAM, 0)) > 0 || die(0));
 
-    setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(int)) != -1 || die(0);
-    setsockopt(listener, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof(int)) != -1 || die(0);
+    (void) (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(int)) != -1 || die(0));
+    (void) (setsockopt(listener, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof(int)) != -1 || die(0));
 
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port = htons(port);
 
-    bind(listener, (struct sockaddr *)&addr, sizeof(addr)) != -1 || die(0);
+    (void) (bind(listener, (struct sockaddr *)&addr, sizeof(addr)) != -1 || die(0));
 
-    listen(listener, SOMAXCONN) != -1 || die(0);
+    (void) (listen(listener, SOMAXCONN) != -1 || die(0));
 
     printf("DEBUG: server socket (%d) listening at %s:%d\n", listener, inet_ntoa(addr.sin_addr), port);
 

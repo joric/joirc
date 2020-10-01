@@ -135,7 +135,7 @@ int ircd_init(ircd_t * cl, char *name, int port)
     addr.sin_port = htons(port);
     (hp = gethostbyname(name)) ? addr.sin_addr.s_addr = *(unsigned int *)hp->h_addr_list[0] : 0;
 
-    connect(sock, (struct sockaddr *)&addr, sizeof(addr)) != -1 || die(0);
+    (void) (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) != -1 || die(0));
 
     printf("connected to %s:%d\n", inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
