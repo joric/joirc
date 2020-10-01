@@ -9,6 +9,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <windows.h>
+#define UNUSED
 #else
 #include <sys/time.h>
 #include <sys/socket.h>
@@ -23,6 +24,7 @@
 #include <unistd.h>
 #define closesocket close
 #define Sleep(t) usleep(t*1000)
+#define UNUSED __attribute__((unused))
 #endif
 
 #define MAX_CLIENTS 32
@@ -284,7 +286,7 @@ int string_to_argv(char **argv, char *str, int size)
     return argc;
 }
 
-void ircd_parse(client_t * clients, int k, int num_clients, char *buf)
+void ircd_parse(client_t * clients, int k, UNUSED int num_clients, char *buf)
 {
     char mask[BUF_SIZE];
     int i = 0;

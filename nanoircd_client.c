@@ -7,6 +7,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <windows.h>
+#define UNUSED
 #else
 #include <sys/time.h>
 #include <sys/socket.h>
@@ -19,6 +20,7 @@
 #include <unistd.h>
 #define closesocket close
 #define Sleep(t) usleep(t*1000)
+#define UNUSED __attribute__((unused))
 #endif
 
 #define BUF_SIZE 4096
@@ -81,7 +83,7 @@ void servmsg(int sock, char *text, char *cmd, char *opt)
     send(sock, buf, len, 0);
 }
 
-int ircd_parse(ircd_t * cl, char *buf, int len)
+int ircd_parse(ircd_t * cl, char *buf, UNUSED int len)
 {
     char opt[BUF_SIZE];
     char from[BUF_SIZE];
@@ -191,7 +193,7 @@ int ircd_update(ircd_t * cl)
 
 ircd_t m_ircd;
 
-int main(int argc, char **argv)
+int main(UNUSED int argc, UNUSED char **argv)
 {
     char *host = "localhost";
     int port = 6667;
