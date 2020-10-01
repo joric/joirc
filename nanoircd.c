@@ -42,8 +42,8 @@ void _log(char *fmt, ...)
     for (i = 0; i < (int)strlen(buf) - 1; i++)
         buf[i] = (unsigned char)buf[i] < 32 ? '.' : buf[i];
     strftime(timestr, sizeof(timestr), "%Y-%m-%d %H:%M:%S ", localtime(&t));
-    fprintf(stdout, timestr);
-    fprintf(stdout, buf);
+    fprintf(stdout, "%s", timestr);
+    fprintf(stdout, "%s", buf);
     fflush(stdout);
 }
 
