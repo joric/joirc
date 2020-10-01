@@ -310,8 +310,6 @@ void ircd_parse(client_t * clients, int k, UNUSED int num_clients, char *buf)
     argc = string_to_argv(argv, buf, 16);
     cmd = argv[0];
 
-    i = 0;
-
     if (cl->state < 2)
     {
         if (argc == 2 && !strcmp(cmd, "NICK"))
