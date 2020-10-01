@@ -176,7 +176,7 @@ int ircd_update(ircd_t * cl)
             cl->len += len;
         }
 
-        while (p = memchr(cl->buf, '\n', cl->len))
+        while ((p = memchr(cl->buf, '\n', cl->len)))
         {
             len = (p - cl->buf) + 1;
             memmove(buf, cl->buf, len);

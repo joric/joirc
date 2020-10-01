@@ -83,7 +83,7 @@ int CL_COUNT(char *list)
 {
     int i = 1;
     char *p = list;
-    while (p = strchr(p, ' '))
+    while ((p = strchr(p, ' ')))
     {
         p++;
         i++;
@@ -416,7 +416,7 @@ void ircd_parse(client_t * clients, int k, int num_clients, char *buf)
         {
             client_t *cw;
 
-            if (cw = get_user_by_nickname(argv[1]))
+            if ((cw = get_user_by_nickname(argv[1])))
             {
                 reply(cl, 0, ":%s 311 %s %s %s %s * %s", serv, cl->nickname, cw->nickname, cw->username, cw->servername, cw->realname);
 
@@ -531,7 +531,7 @@ int main(int argc, char *argv[])
                             clients[i].len += len;
                         }
 
-                        while (p = (char*)memchr(clients[i].buf, '\n', clients[i].len))
+                        while ((p = (char*)memchr(clients[i].buf, '\n', clients[i].len)))
                         {
                             len = (p - clients[i].buf) + 1;
                             memmove(buf, clients[i].buf, len);
