@@ -107,7 +107,7 @@ char *CL_HEAD(char *list, int n)
     {
         static char buf[BUF_SIZE];
         char *p = strchr_n(list, n - 1);
-        int len = p ? p - list : n ? strlen(list) : 0;
+        int len = p ? p - list : n ? (int) strlen(list) : 0;
         memcpy(buf, list, len);
         buf[len] = 0;
         return buf;
@@ -121,7 +121,7 @@ char *CL_TAIL(char *list, int n)
     {
         static char buf[BUF_SIZE];
         char *p = strchr_n(list, n - 1);
-        int len = p ? p - list + 1 : n ? strlen(list) : 0;
+        int len = p ? p - list + 1 : n ? (int) strlen(list) : 0;
         memcpy(buf, list + len, strlen(list) - len);
         buf[strlen(list) - len] = 0;
         return buf;
@@ -492,7 +492,7 @@ int main(int argc, char *argv[])
             {
                 int newfd;
                 struct sockaddr_in addr;
-                int addr_size = sizeof(addr);
+                unsigned int addr_size = sizeof(addr);
                 if ((newfd = accept(listener, (struct sockaddr *)&addr, &addr_size)) != -1)
                 {
                     client_t *cl = &clients[num_clients];
