@@ -155,7 +155,6 @@ int ircd_update(ircd_t * cl)
     int len;
     char *p;
     char buf[BUF_SIZE];
-    char opt[BUF_SIZE];
     int sock = cl->sock;
 
     len = recv(sock, buf, BUF_SIZE - 1, 0);

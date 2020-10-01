@@ -31,7 +31,7 @@
 
 void _log(char *fmt, ...)
 {
-    int i, len;
+    int i;
     char buf[BUF_SIZE];
     char timestr[32];
     time_t t = time(0);
@@ -39,7 +39,6 @@ void _log(char *fmt, ...)
     va_start(ap, fmt);
     vsnprintf(buf, BUF_SIZE - 1, fmt, ap);
     va_end(ap);
-    len = (int)strlen(buf);
     for (i = 0; i < (int)strlen(buf) - 1; i++)
         buf[i] = (unsigned char)buf[i] < 32 ? '.' : buf[i];
     strftime(timestr, sizeof(timestr), "%Y-%m-%d %H:%M:%S ", localtime(&t));
@@ -297,7 +296,6 @@ void ircd_parse(client_t * clients, int k, int num_clients, char *buf)
         0
     };
     client_t *cl = &clients[k];
-    int sock = cl->sock;
 
     for (i = 0; i < (int)strlen(buf); i++)
     {
@@ -454,7 +452,6 @@ int main(int argc, char *argv[])
     fd_set read_mask;
     struct timeval timeout;
     int on = 1;
-    int sec = 0;
 
 #ifdef _WIN32
     WSADATA wsa;
