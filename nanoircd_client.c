@@ -15,6 +15,8 @@
 #include <fcntl.h>
 #include <netdb.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
 #define closesocket close
 #define Sleep(t) usleep(t*1000)
 #endif
