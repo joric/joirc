@@ -7,6 +7,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <windows.h>
+#define UNUSED
 #else
 #include <sys/time.h>
 #include <sys/socket.h>
@@ -15,8 +16,11 @@
 #include <fcntl.h>
 #include <netdb.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
 #define closesocket close
 #define Sleep(t) usleep(t*1000)
+#define UNUSED __attribute__((unused))
 #endif
 
 #define BUF_SIZE 4096
@@ -79,7 +83,7 @@ void servmsg(int sock, char *text, char *cmd, char *opt)
     send(sock, buf, len, 0);
 }
 
-int ircd_parse(ircd_t * cl, char *buf, int len)
+int ircd_parse(ircd_t * cl, char *buf, UNUSED int len)
 {
     char opt[BUF_SIZE];
     char from[BUF_SIZE];
@@ -133,7 +137,7 @@ int ircd_init(ircd_t * cl, char *name, int port)
     addr.sin_port = htons(port);
     (hp = gethostbyname(name)) ? addr.sin_addr.s_addr = *(unsigned int *)hp->h_addr_list[0] : 0;
 
-    connect(sock, (struct sockaddr *)&addr, sizeof(addr)) != -1 || die(0);
+    (void) (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) != -1 || die(0));
 
     printf("connected to %s:%d\n", inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
@@ -153,7 +157,6 @@ int ircd_update(ircd_t * cl)
     int len;
     char *p;
     char buf[BUF_SIZE];
-    char opt[BUF_SIZE];
     int sock = cl->sock;
 
     len = recv(sock, buf, BUF_SIZE - 1, 0);
@@ -174,7 +177,7 @@ int ircd_update(ircd_t * cl)
             cl->len += len;
         }
 
-        while (p = memchr(cl->buf, '\n', cl->len))
+        while ((p = memchr(cl->buf, '\n', cl->len)))
         {
             len = (p - cl->buf) + 1;
             memmove(buf, cl->buf, len);
@@ -190,7 +193,7 @@ int ircd_update(ircd_t * cl)
 
 ircd_t m_ircd;
 
-int main(int argc, char **argv)
+int main(UNUSED int argc, UNUSED char **argv)
 {
     char *host = "localhost";
     int port = 6667;

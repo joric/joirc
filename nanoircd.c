@@ -9,6 +9,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <windows.h>
+#define UNUSED
 #else
 #include <sys/time.h>
 #include <sys/socket.h>
@@ -20,8 +21,10 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <unistd.h>
 #define closesocket close
 #define Sleep(t) usleep(t*1000)
+#define UNUSED __attribute__((unused))
 #endif
 
 #define MAX_CLIENTS 32
@@ -30,7 +33,7 @@
 
 void _log(char *fmt, ...)
 {
-    int i, len;
+    int i;
     char buf[BUF_SIZE];
     char timestr[32];
     time_t t = time(0);
@@ -38,12 +41,11 @@ void _log(char *fmt, ...)
     va_start(ap, fmt);
     vsnprintf(buf, BUF_SIZE - 1, fmt, ap);
     va_end(ap);
-    len = (int)strlen(buf);
     for (i = 0; i < (int)strlen(buf) - 1; i++)
         buf[i] = (unsigned char)buf[i] < 32 ? '.' : buf[i];
     strftime(timestr, sizeof(timestr), "%Y-%m-%d %H:%M:%S ", localtime(&t));
-    fprintf(stdout, timestr);
-    fprintf(stdout, buf);
+    fprintf(stdout, "%s", timestr);
+    fprintf(stdout, "%s", buf);
     fflush(stdout);
 }
 
@@ -82,7 +84,7 @@ int CL_COUNT(char *list)
 {
     int i = 1;
     char *p = list;
-    while (p = strchr(p, ' '))
+    while ((p = strchr(p, ' ')))
     {
         p++;
         i++;
@@ -105,7 +107,7 @@ char *CL_HEAD(char *list, int n)
     {
         static char buf[BUF_SIZE];
         char *p = strchr_n(list, n - 1);
-        int len = p ? p - list : n ? strlen(list) : 0;
+        int len = p ? p - list : n ? (int) strlen(list) : 0;
         memcpy(buf, list, len);
         buf[len] = 0;
         return buf;
@@ -119,7 +121,7 @@ char *CL_TAIL(char *list, int n)
     {
         static char buf[BUF_SIZE];
         char *p = strchr_n(list, n - 1);
-        int len = p ? p - list + 1 : n ? strlen(list) : 0;
+        int len = p ? p - list + 1 : n ? (int) strlen(list) : 0;
         memcpy(buf, list + len, strlen(list) - len);
         buf[strlen(list) - len] = 0;
         return buf;
@@ -284,7 +286,7 @@ int string_to_argv(char **argv, char *str, int size)
     return argc;
 }
 
-void ircd_parse(client_t * clients, int k, int num_clients, char *buf)
+void ircd_parse(client_t * clients, int k, UNUSED int num_clients, char *buf)
 {
     char mask[BUF_SIZE];
     int i = 0;
@@ -296,7 +298,6 @@ void ircd_parse(client_t * clients, int k, int num_clients, char *buf)
         0
     };
     client_t *cl = &clients[k];
-    int sock = cl->sock;
 
     for (i = 0; i < (int)strlen(buf); i++)
     {
@@ -308,8 +309,6 @@ void ircd_parse(client_t * clients, int k, int num_clients, char *buf)
 
     argc = string_to_argv(argv, buf, 16);
     cmd = argv[0];
-
-    i = 0;
 
     if (cl->state < 2)
     {
@@ -415,7 +414,7 @@ void ircd_parse(client_t * clients, int k, int num_clients, char *buf)
         {
             client_t *cw;
 
-            if (cw = get_user_by_nickname(argv[1]))
+            if ((cw = get_user_by_nickname(argv[1])))
             {
                 reply(cl, 0, ":%s 311 %s %s %s %s * %s", serv, cl->nickname, cw->nickname, cw->username, cw->servername, cw->realname);
 
@@ -453,7 +452,6 @@ int main(int argc, char *argv[])
     fd_set read_mask;
     struct timeval timeout;
     int on = 1;
-    int sec = 0;
 
 #ifdef _WIN32
     WSADATA wsa;
@@ -463,18 +461,18 @@ int main(int argc, char *argv[])
     timeout.tv_sec = 0;
     timeout.tv_usec = 0;
 
-    (listener = socket(AF_INET, SOCK_STREAM, 0)) > 0 || die(0);
+    (void) ((listener = socket(AF_INET, SOCK_STREAM, 0)) > 0 || die(0));
 
-    setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(int)) != -1 || die(0);
-    setsockopt(listener, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof(int)) != -1 || die(0);
+    (void) (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(int)) != -1 || die(0));
+    (void) (setsockopt(listener, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof(int)) != -1 || die(0));
 
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port = htons(port);
 
-    bind(listener, (struct sockaddr *)&addr, sizeof(addr)) != -1 || die(0);
+    (void) (bind(listener, (struct sockaddr *)&addr, sizeof(addr)) != -1 || die(0));
 
-    listen(listener, SOMAXCONN) != -1 || die(0);
+    (void) (listen(listener, SOMAXCONN) != -1 || die(0));
 
     printf("DEBUG: server socket (%d) listening at %s:%d\n", listener, inet_ntoa(addr.sin_addr), port);
 
@@ -492,7 +490,7 @@ int main(int argc, char *argv[])
             {
                 int newfd;
                 struct sockaddr_in addr;
-                int addr_size = sizeof(addr);
+                unsigned int addr_size = sizeof(addr);
                 if ((newfd = accept(listener, (struct sockaddr *)&addr, &addr_size)) != -1)
                 {
                     client_t *cl = &clients[num_clients];
@@ -530,7 +528,7 @@ int main(int argc, char *argv[])
                             clients[i].len += len;
                         }
 
-                        while (p = (char*)memchr(clients[i].buf, '\n', clients[i].len))
+                        while ((p = (char*)memchr(clients[i].buf, '\n', clients[i].len)))
                         {
                             len = (p - clients[i].buf) + 1;
                             memmove(buf, clients[i].buf, len);
