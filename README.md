@@ -1,5 +1,5 @@
-nanoircd
-========
+Joric's IRC
+===========
 
 Quick and dirty IRC daemon, C-version, public domain.
 
