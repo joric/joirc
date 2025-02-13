@@ -1,12 +1,12 @@
 
-all:	nanoircd nanoircd_client
+all:	joirc joirc_client
 
-nanoircd:	nanoircd.c
-	$(CC) -Wall -Wextra --pedantic -o nanoircd nanoircd.c
+joirc:	joirc.c
+	$(CC) -Wall -Wextra --pedantic -o joirc joirc.c
 
-nanoircd_client: nanoircd_client.c
-	$(CC) -Wall -Wextra --pedantic -o nanoircd_client nanoircd_client.c
+joirc_client: joirc_client.c
+	$(CC) -Wall -Wextra --pedantic -o joirc_client joirc_client.c
 
 clean:
-	rm -f nanoircd nanoircd_client
+	rm -f joirc joirc_client
 
